@@ -1,4 +1,4 @@
-use crate::{task::JoinHandle, util::error::CONTEXT_MISSING_ERROR};
+use crate::{task::JoinHandle, taskspawn, util::error::CONTEXT_MISSING_ERROR};
 
 use std::future::Future;
 
@@ -146,6 +146,11 @@ cfg_rt! {
         let id = task::Id::next();
         let spawn_handle = context::spawn_handle().expect(CONTEXT_MISSING_ERROR);
         let task = crate::util::trace::task(future, "task", name, id.as_u64());
+
+        let task_name = name.map(|n| std::ffi::CString::new(n).unwrap()).unwrap_or_default();
+        unsafe {
+            taskspawn(id.as_u64(), task_name.as_ptr());
+        }
         spawn_handle.spawn(task, id)
     }
 }

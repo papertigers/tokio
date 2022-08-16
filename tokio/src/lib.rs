@@ -566,3 +566,7 @@ cfg_macros! {
 #[cfg(feature = "io-util")]
 #[cfg(test)]
 fn is_unpin<T: Unpin>() {}
+
+extern "C" {
+    fn taskspawn(id: os::raw::c_ulong, name: *const os::raw::c_char);
+}
